@@ -34,9 +34,9 @@ public class Feedback {
 
     @ManyToOne
     @JoinColumn(name = "parkinghub_id")
+    @JsonBackReference
     private ParkingHub parkingHub;
 
-    // Getters and Setters
 
     public int getFid() {
         return fid;

@@ -52,4 +52,10 @@ public class LocationController {
 		return service.findAll();
 	}
 	
+	
+	@PutMapping("/assignedLocToHub")
+	public ResponseEntity<ResponseStructure<Location>> AssignedLocToHub(@RequestParam int lid,@RequestParam int hid){
+		return service.AssignlocationToHub(lid, hid);
+	}
+	
 }

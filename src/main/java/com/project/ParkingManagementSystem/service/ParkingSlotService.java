@@ -9,9 +9,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.project.ParkingManagementSystem.config.ResponseStructure;
+import com.project.ParkingManagementSystem.dao.NotificationDao;
 import com.project.ParkingManagementSystem.dao.ParkingSlotdao;
+import com.project.ParkingManagementSystem.entity.Notification;
 import com.project.ParkingManagementSystem.entity.ParkingHub;
 import com.project.ParkingManagementSystem.entity.ParkingSlot;
+import com.project.ParkingManagementSystem.repo.NotificationRepo;
 import com.project.ParkingManagementSystem.repo.ParkingSlotRepo;
 
 @Service
@@ -22,6 +25,12 @@ public class ParkingSlotService {
 	
 	@Autowired
 	ParkingSlotdao dao;
+	
+	@Autowired
+	NotificationDao ndao;
+	
+	@Autowired
+	NotificationRepo nrepo;
 	
 	@Autowired
 	ResponseStructure<ParkingSlot> structure;
@@ -75,6 +84,27 @@ public class ParkingSlotService {
 	public ResponseEntity<List<ParkingSlot>>  findAll(){
 		return new ResponseEntity<List<ParkingSlot>>(dao.findAll(),HttpStatus.FOUND);
 	}
+	
+	
+	public ResponseEntity<ResponseStructure<ParkingSlot>> AssignedSlotToNotify(int sid,int nid){
+		ParkingSlot slot=dao.findById(sid);
+		Notification notify=ndao.findbyId(nid);
+		
+		if(slot!=null) {
+			if(notify!=null) {
+				slot.setNotification(notify);
+				notify.setSlot(slot);
+				repo.save(slot);
+				nrepo.save(notify);
+				structure.setData(slot);
+				structure.setMessage("Assigned parkingslot to notification successfully");
+				structure.setStatus(HttpStatus.ACCEPTED.value());
+				return new ResponseEntity<ResponseStructure<ParkingSlot>>(structure,HttpStatus.ACCEPTED);
+			}
+		}
+		return null;
+	}
+	
 	
 	
 	

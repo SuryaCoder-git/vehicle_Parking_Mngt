@@ -1,9 +1,9 @@
 package com.project.ParkingManagementSystem.entity;
 
 import java.util.List;
-import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
@@ -30,18 +30,16 @@ public class ParkingHub {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "location_id")
+    @JsonBackReference 
     private Location location;
-    
-    
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parkingHub")
-    @JsonIgnore
-    private Set<ParkingSlot> slots;
 
-    
-    @OneToMany(mappedBy = "parkingHub", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parkingHub", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference 
+    private List<ParkingSlot> slots;
+
+    @OneToMany(mappedBy = "parkingHub", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Feedback> feedbacks;
 
-    // Getters and Setters
     public int getHid() {
         return hid;
     }
@@ -74,11 +72,11 @@ public class ParkingHub {
         this.location = location;
     }
 
-    public Set<ParkingSlot> getSlots() {
+    public List<ParkingSlot> getSlots() {
         return slots;
     }
 
-    public void setSlots(Set<ParkingSlot> slots) {
+    public void setSlots(List<ParkingSlot> slots) {
         this.slots = slots;
     }
 

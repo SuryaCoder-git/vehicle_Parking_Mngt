@@ -1,5 +1,6 @@
 package com.project.ParkingManagementSystem.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ public class ParkingSlot {
 
     @ManyToOne
     @JoinColumn(name = "hub_id", nullable = true)
+    @JsonBackReference
     private ParkingHub parkingHub;
 
     @OneToOne

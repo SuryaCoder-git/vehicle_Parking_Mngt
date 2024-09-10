@@ -53,5 +53,11 @@ public class ParkingSlotController {
 	}
 	
 	
+	@PutMapping("/assignedSlotToNotify")
+	public ResponseEntity<ResponseStructure<ParkingSlot>> AssignedSlotToNotify(@RequestParam int sid,@RequestParam int nid){
+		return service.AssignedSlotToNotify(sid, nid);
+	}
+	
+	
 
 }

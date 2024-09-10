@@ -1,5 +1,6 @@
 package com.project.ParkingManagementSystem.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,20 +10,33 @@ import org.springframework.stereotype.Service;
 
 import com.project.ParkingManagementSystem.config.ResponseStructure;
 import com.project.ParkingManagementSystem.dao.LocationDao;
+import com.project.ParkingManagementSystem.dao.ParkingHubDao;
 import com.project.ParkingManagementSystem.entity.Location;
+import com.project.ParkingManagementSystem.entity.ParkingHub;
+import com.project.ParkingManagementSystem.exception.LocationNotSaved;
+import com.project.ParkingManagementSystem.repo.LocationRepo;
+import com.project.ParkingManagementSystem.repo.ParkingHubRepo;
 
 @Service
 public class LocationService {
-	
-	
+
+
 	@Autowired
 	LocationDao dao;
-	
-	
+
+	@Autowired
+	ParkingHubDao hdao;
+
+	@Autowired
+	LocationRepo repo;
+
+	@Autowired
+	ParkingHubRepo hrepo;
+
 	@Autowired
 	ResponseStructure<Location> structure;
 
-	
+
 	public ResponseEntity<ResponseStructure<Location>>  savelocation(Location loc){
 		Location location=dao.savelocation(loc);
 		if(location!=null) {
@@ -31,10 +45,10 @@ public class LocationService {
 			structure.setStatus(HttpStatus.ACCEPTED.value());
 			return new ResponseEntity<ResponseStructure<Location>>(structure,HttpStatus.ACCEPTED);
 		}
-		return null;
+	  throw new LocationNotSaved("Location not Saved");
 	}
-	
-	
+
+
 	public ResponseEntity<ResponseStructure<Location>>  findlocation(int id){
 		Location location=dao.findById(id);
 		if(location!=null) {
@@ -45,7 +59,7 @@ public class LocationService {
 		}
 		return null;
 	}
-	
+
 	public ResponseEntity<ResponseStructure<Location>>  updatelocation(Location loc,int id){
 		Location location=dao.updatelocation(loc, id);
 		if(location!=null) {
@@ -56,9 +70,9 @@ public class LocationService {
 		}
 		return null;
 	}
-	
-	
-	
+
+
+
 	public ResponseEntity<ResponseStructure<Location>>  deletelocation(int id){
 		Location location=dao.deleteLocation(id);
 		if(location!=null) {
@@ -69,14 +83,40 @@ public class LocationService {
 		}
 		return null;
 	}
-	
-	
-	
+
+
+
 	public ResponseEntity<List<Location>>  findAll(){
 		return new ResponseEntity<List<Location>>(dao.findall(),HttpStatus.FOUND);
-		
+
 	}
-	
-	
-	
+
+
+	public ResponseEntity<ResponseStructure<Location>>  AssignlocationToHub(int lid,int hid){
+		Location loc=dao.findById(lid);
+		ParkingHub hub=hdao.findByHub(hid);
+		if(loc!=null) {
+			if(hub!=null) {
+				if(hub.getLocation()==null) {
+					hub.setLocation(loc);
+					List<ParkingHub> HubList=loc.getHubs();
+					if(HubList!=null) {
+						HubList=new ArrayList<ParkingHub>();
+					}
+					HubList.add(hub);
+					loc.setHubs(HubList);
+					dao.savelocation(loc);
+					hdao.saveHub(hub);
+					structure.setData(loc);
+					structure.setMessage("Assigned Location to Parkinghub succesfully");
+					structure.setStatus(HttpStatus.ACCEPTED.value());
+					return new ResponseEntity<ResponseStructure<Location>>(structure,HttpStatus.ACCEPTED);	
+				}
+			}
+		}
+		return null;
+	}
+
+
+
 }

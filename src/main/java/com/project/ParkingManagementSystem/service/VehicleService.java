@@ -13,6 +13,12 @@ import com.project.ParkingManagementSystem.dao.VehicleDao;
 import com.project.ParkingManagementSystem.entity.ParkingSlot;
 import com.project.ParkingManagementSystem.entity.User;
 import com.project.ParkingManagementSystem.entity.Vehicle;
+import com.project.ParkingManagementSystem.exception.ParkingSlotNotFound;
+import com.project.ParkingManagementSystem.exception.VehicleHaveSlot;
+import com.project.ParkingManagementSystem.exception.VehicleNotDeleted;
+import com.project.ParkingManagementSystem.exception.VehicleNotFound;
+import com.project.ParkingManagementSystem.exception.VehicleNotSaved;
+import com.project.ParkingManagementSystem.exception.VehicleNotUpdated;
 import com.project.ParkingManagementSystem.repo.VehicleRepo;
 
 @Service
@@ -22,12 +28,7 @@ public class VehicleService {
 	VehicleDao dao;
 
 	@Autowired
-	VehicleRepo repo;
-
-	@Autowired
 	ParkingSlotdao sdao;
-
-
 
 	@Autowired
 	ResponseStructure<Vehicle>  structure;
@@ -44,7 +45,7 @@ public class VehicleService {
 			structure.setStatus(HttpStatus.ACCEPTED.value());
 			return new ResponseEntity<ResponseStructure<Vehicle>>(structure,HttpStatus.ACCEPTED);
 		}
-		return null;	
+		throw new VehicleNotSaved("vehicle not Saved");
 	}
 
 	public ResponseEntity<ResponseStructure<Vehicle>>  findVehicle(int id){
@@ -55,7 +56,7 @@ public class VehicleService {
 			structure.setStatus(HttpStatus.FOUND.value());
 			return new ResponseEntity<ResponseStructure<Vehicle>>(structure,HttpStatus.FOUND);
 		}
-		return null;	
+		throw new VehicleNotFound("Vehicle not Found");	
 	}
 
 
@@ -67,7 +68,7 @@ public class VehicleService {
 			structure.setStatus(HttpStatus.IM_USED.value());
 			return new ResponseEntity<ResponseStructure<Vehicle>>(structure,HttpStatus.IM_USED);
 		}
-		return null;	
+		throw new VehicleNotUpdated("vehicle not Updated");
 	}
 
 
@@ -79,7 +80,7 @@ public class VehicleService {
 			structure.setStatus(HttpStatus.OK.value());
 			return new ResponseEntity<ResponseStructure<Vehicle>>(structure,HttpStatus.OK);
 		}
-		return null;	
+		throw new VehicleNotDeleted("vehicle not deleted");	
 	}
 
 	public ResponseEntity<List<Vehicle>> findAll(){
@@ -96,10 +97,10 @@ public class VehicleService {
 			userstructure.setStatus(HttpStatus.ACCEPTED.value());
 			return new ResponseEntity<ResponseStructure<User>>(userstructure,HttpStatus.ACCEPTED);
 		}
-		return null;
+		throw new VehicleNotFound("vehicle not found");
 	}
 
-	
+
 	public ResponseEntity<ResponseStructure<Vehicle>> assignvehicleToSlot(int vid,int sid){
 		Vehicle ve=dao.findByid(vid);
 		ParkingSlot slot=sdao.findById(sid);
@@ -107,17 +108,21 @@ public class VehicleService {
 			if(slot!=null) {
 				if(ve.getParkingSlot()==null) {
 					ve.setParkingSlot(slot);
-					repo.save(ve);
+					dao.saveVehicle(ve);
 					structure.setData(ve);
 					structure.setMessage("parkingSlot Assigned to vehicle successfully");
 					structure.setStatus(HttpStatus.IM_USED.value());
 					return new ResponseEntity<ResponseStructure<Vehicle>>(structure,HttpStatus.IM_USED);
 				}
+				throw new VehicleHaveSlot("Vehicle Have ParkingSlot");
 			}
-
+			throw new ParkingSlotNotFound("Parking Slot Not Found");
 		}
-		return null;
+		throw new VehicleNotFound("Vehicle Not Found");
 	}
+
+
+
 
 
 
