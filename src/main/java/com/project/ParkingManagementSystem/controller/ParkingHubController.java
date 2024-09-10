@@ -51,5 +51,19 @@ public class ParkingHubController {
 	}
 	
 	
+	@PutMapping("/assignhubToSlot")
+	public ResponseEntity<ResponseStructure<ParkingHub>> AssignedHubToSlot(@RequestParam int hid,@RequestParam int sid){
+		return service.AssignHubToSlot(hid, sid);
+	}
+	
+	@PutMapping("/assignhubToFeed")
+	public ResponseEntity<ResponseStructure<ParkingHub>> AssignedHubToFeed(@RequestParam int hid,@RequestParam int fid){
+		return service.AssignHubToFeedback(hid, fid);
+	}
+	
+	
+	
+	
+	
 
 }

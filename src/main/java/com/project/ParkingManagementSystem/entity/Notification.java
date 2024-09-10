@@ -18,12 +18,12 @@ public class Notification {
     private User user;
 
     @OneToOne(mappedBy = "notification")
+    @JsonBackReference
     private ParkingSlot slot;
 
     @Column(name = "message")
     private String message;
 
-    // Getters and Setters
     public int getNotificationId() {
         return notificationId;
     }

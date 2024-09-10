@@ -12,6 +12,10 @@ import com.project.ParkingManagementSystem.config.ResponseStructure;
 import com.project.ParkingManagementSystem.dao.FeedbackDao;
 import com.project.ParkingManagementSystem.entity.Feedback;
 import com.project.ParkingManagementSystem.entity.Payment;
+import com.project.ParkingManagementSystem.exception.FeedBackNotUpdated;
+import com.project.ParkingManagementSystem.exception.FeedbackNotDeleted;
+import com.project.ParkingManagementSystem.exception.FeedbackNotFound;
+import com.project.ParkingManagementSystem.exception.FeedbackNotSaved;
 
 @Service
 public class FeedbackService {
@@ -31,7 +35,7 @@ public class FeedbackService {
 			structure.setStatus(HttpStatus.ACCEPTED.value());
 			return new ResponseEntity<ResponseStructure<Feedback>>(structure,HttpStatus.ACCEPTED);
 		}
-		return null;
+		throw new FeedbackNotSaved("Feedback not Saved");
 	}
 	
 	
@@ -43,8 +47,9 @@ public class FeedbackService {
 			structure.setStatus(HttpStatus.IM_USED.value());
 			return new ResponseEntity<ResponseStructure<Feedback>>(structure,HttpStatus.IM_USED);
 		}
-		return null;
+	throw new FeedBackNotUpdated("Feedback Not Updated");
 	}
+	
 	
 	public ResponseEntity<ResponseStructure<Feedback>>  deletefeed(int id){
 		Feedback fb=dao.deleteFeed(id);
@@ -54,8 +59,9 @@ public class FeedbackService {
 			structure.setStatus(HttpStatus.OK.value());
 			return new ResponseEntity<ResponseStructure<Feedback>>(structure,HttpStatus.OK);
 		}
-		return null;
+		throw new FeedbackNotDeleted("Feedback Not Deleted");
 	}
+	
 	
 	public ResponseEntity<ResponseStructure<Feedback>>  Findfeed(int id){
 		Feedback fb=dao.findById(id);
@@ -65,7 +71,7 @@ public class FeedbackService {
 			structure.setStatus(HttpStatus.FOUND.value());
 			return new ResponseEntity<ResponseStructure<Feedback>>(structure,HttpStatus.FOUND);
 		}
-		return null;
+		throw new FeedbackNotFound("FeedBack Not Found");
 	}
 	public ResponseEntity<List<Feedback>>FindAll(){
 		return new ResponseEntity<List<Feedback>>(dao.findAll(),HttpStatus.FOUND);

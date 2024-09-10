@@ -2,6 +2,8 @@ package com.project.ParkingManagementSystem.entity;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -33,6 +35,7 @@ public class Location {
     private String address;
     
     @OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<ParkingHub> hubs;
 
 	public int getLid() {
@@ -75,6 +78,5 @@ public class Location {
 		this.hubs = hubs;
 	}
 
-    // Getters and Setters
     
 }
